@@ -42,6 +42,7 @@ const MenuIcon = (props: MenuIconProps) => {
   const menuListRef = useRef<HTMLDivElement>(null);
 
   const calculatePlacement = useCallback(() => {
+    console.log('calculatePlacement');
     const itemPosition = toggleTargetRef.current?.getBoundingClientRect() || {
       bottom: 0,
       top: 0,
@@ -93,8 +94,7 @@ const MenuIcon = (props: MenuIconProps) => {
   useEffect(() => {
     calculatePlacement();
     calculateHeight();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [calculateHeight, calculatePlacement]);
 
   useEffect(() => {
     const handleWindowResize = _debounce(() => {
