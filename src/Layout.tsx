@@ -13,9 +13,16 @@ function Layout(props: IProps) {
   const { children, simulate = false } = props;
   const [colorMode] = useColorMode();
   const [colorStyle] = useColorStyle({ colorMode });
-  const { fontSizes, lineHeights } = useTheme();
+  const { fontSizes, lineHeights, colors } = useTheme();
   const backgroundColor = colorStyle.background.primary;
   const color = colorStyle.color.primary;
+  const scrollbarThumbBackgroundColor = colorStyle.color.disabled;
+  const scrollbarThumbHoverBackgroundColor = colorStyle.color.tertiary;
+  const scrollbarThumbHoverBorderColor = colorStyle.color.secondary;
+  const scrollbarTrackBackgroundColor = {
+    light: 'gray:30',
+    dark: 'gray:70',
+  }[colorMode];
 
   const styles = css`
     :root {
@@ -35,6 +42,20 @@ function Layout(props: IProps) {
     }
     * {
       box-sizing: border-box;
+    }
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background-color: ${colors[scrollbarTrackBackgroundColor]};
+    }
+    ::-webkit-scrollbar-thumb {
+      background-color: ${colors[scrollbarThumbBackgroundColor]};
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background-color: ${colors[scrollbarThumbHoverBackgroundColor]};
+      border: 1px solid ${colors[scrollbarThumbHoverBorderColor]};
     }
   `;
 

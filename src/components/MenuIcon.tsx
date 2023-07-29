@@ -1,3 +1,5 @@
+import { useState, Ref, useRef } from 'react';
+
 import styled from '@emotion/styled';
 import {
   Menu,
@@ -19,10 +21,19 @@ const MainIconBtn = styled(IconButton)`
   border-radius: 50%;
 `;
 
-const MenuIcon = (props) => {
-  console.log('MenuIcon');
+type MenuIconProps = {
+  parentRef?: Ref<HTMLDivElement>;
+  defaultPlacement?: 'top' | 'bottom' | 'top-start' | 'top-end' | 'bottom-start' | 'bottom-end';
+};
+
+const MenuIcon = (props: MenuIconProps) => {
+  const { parentRef, defaultPlacement } = props;
+  const [placement, setPlacement] = useState(defaultPlacement || 'top-start');
+  const toggleTargetRef = useRef<HTMLDivElement>(null);
+  const menuListRef = useRef<HTMLDivElement>(null);
+
   return (
-    <Menu>
+    <Menu placement={placement}>
       <MenuToggle>
         <MainIconBtn>
           <Icon icon="user-team" size="5x" />
@@ -34,7 +45,12 @@ const MenuIcon = (props) => {
             {
               // https://popper.js.org/docs/v2/modifiers/flip/
               name: 'flip',
-              enabled: true,
+              options: {
+                altBoundary: true,
+                fallbackPlacements: ['top', 'right'],
+                rootBoundary: 'viewport',
+              },
+              // enabled: true,
             },
           ],
         }}

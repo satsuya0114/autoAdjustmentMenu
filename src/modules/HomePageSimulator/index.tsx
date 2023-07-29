@@ -3,6 +3,7 @@ import { useState } from 'react';
 import styled from '@emotion/styled';
 import { TonicProvider, Box, TextLabel, Space, Stack, Flex } from '@tonic-ui/react';
 
+import DemoModal from '@/components/DemoModal';
 import MenuIcon from '@/components/MenuIcon';
 import Layout from '@/Layout';
 
@@ -11,7 +12,7 @@ const SideNav = styled.div`
   position: fixed;
   flex: 0 0 64px !important;
   left: 0px;
-  height: 100%;
+  height: 100vh;
   background-color: #000;
   min-width: 64px !important;
   max-width: 64px !important;
@@ -68,8 +69,10 @@ function HomePageSimulator() {
       <Layout simulate>
         <Box height="100vh" style={{ backgroundColor: 'rgb(21, 21, 21)' }}>
           <SideNav>
-            <Space height={100} />
-            <MenuIcon />
+            <Stack height="100%" justifyContent="space-between">
+              <MenuIcon />
+              <MenuIcon />
+            </Stack>
           </SideNav>
           <PageMain>
             <Header>
@@ -93,6 +96,8 @@ function HomePageSimulator() {
                 <TextLabel fontSize="48px">TXone Platform</TextLabel>
                 <Space height="4x" />
                 <MenuIcon />
+                <Space height="4x" />
+                <DemoModal />
               </Stack>
             </Content>
           </PageMain>
