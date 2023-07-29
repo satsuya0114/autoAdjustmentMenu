@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 
 import {
   Modal,
@@ -19,6 +19,7 @@ const DemoModal = () => {
   const [isOpen, setIsOpen] = useState(false);
   const openModal = () => setIsOpen(true);
   const closeModal = () => setIsOpen(false);
+  const modalBodyRef = useRef<HTMLDivElement>(null);
   return (
     <>
       <Button onClick={openModal}>Open a Modal</Button>
@@ -29,15 +30,15 @@ const DemoModal = () => {
             <Text>Header</Text>
           </ModalHeader>
           <ModalBody>
-            <Stack height={300} justifyContent="space-between" id="modalBody">
+            <Stack height={300} justifyContent="space-between" id="modalBody" ref={modalBodyRef}>
               <Text>This is a Modal.</Text>
               <Flex justifyContent="space-between">
-                <MenuIcon />
-                <MenuIcon />
+                <MenuIcon parentRef={modalBodyRef} />
+                <MenuIcon parentRef={modalBodyRef} />
               </Flex>
               <Flex justifyContent="space-between">
-                <MenuIcon />
-                <MenuIcon />
+                <MenuIcon parentRef={modalBodyRef} />
+                <MenuIcon parentRef={modalBodyRef} />
               </Flex>
             </Stack>
           </ModalBody>

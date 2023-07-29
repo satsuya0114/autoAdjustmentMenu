@@ -1,4 +1,4 @@
-import { useState, Ref, useRef } from 'react';
+import { useState, RefObject, useRef, useEffect } from 'react';
 
 import styled from '@emotion/styled';
 import {
@@ -12,29 +12,83 @@ import {
   Text,
 } from '@tonic-ui/react';
 
-import IconButton from './IconButton';
-
-const MainIconBtn = styled(IconButton)`
+const MainIconBtn = styled(Flex)`
   width: 50px;
   height: 50px;
   background-color: pink;
   border-radius: 50%;
+  align-items: center;
+  justify-content: center;
 `;
 
 type MenuIconProps = {
-  parentRef?: Ref<HTMLDivElement>;
-  defaultPlacement?: 'top' | 'bottom' | 'top-start' | 'top-end' | 'bottom-start' | 'bottom-end';
+  parentRef?: RefObject<HTMLDivElement>;
+  defaultPlacementX?: 'top' | 'bottom';
+  defaultPlacementY?: 'start' | 'end';
 };
 
+const MENU_LIST_WIDTH = 200;
+
+const DEFAULT_LIST_HEIGHT = 200;
+
 const MenuIcon = (props: MenuIconProps) => {
-  const { parentRef, defaultPlacement } = props;
-  const [placement, setPlacement] = useState(defaultPlacement || 'top-start');
+  const { parentRef = null, defaultPlacementX, defaultPlacementY } = props;
+  const [placementX, setPlacementX] = useState(defaultPlacementX || 'bottom');
+  const [placementY, setPlacementY] = useState(defaultPlacementY || 'start');
+  const [menuListMaxHeight, setMenuListMaxHeight] = useState(DEFAULT_LIST_HEIGHT);
   const toggleTargetRef = useRef<HTMLDivElement>(null);
   const menuListRef = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    const itemPosition = toggleTargetRef.current?.getBoundingClientRect() || {
+      bottom: 0,
+      top: 0,
+      right: 0,
+      left: 0,
+    };
+    let xPositionCalculate: 'bottom' | 'top' =
+      window.innerHeight - itemPosition.bottom > itemPosition.top ? 'bottom' : 'top';
+    let yPositionCalculate: 'start' | 'end' =
+      window.innerWidth - itemPosition.right > itemPosition.left ? 'start' : 'end';
+    if (defaultPlacementX !== xPositionCalculate && defaultPlacementX === 'top') {
+      if (itemPosition.top - DEFAULT_LIST_HEIGHT > 0) xPositionCalculate = 'top';
+    } else if (defaultPlacementX !== xPositionCalculate && defaultPlacementX === 'bottom') {
+      if (itemPosition.bottom + DEFAULT_LIST_HEIGHT < window.innerHeight) {
+        xPositionCalculate = 'bottom';
+      }
+    }
+    if (defaultPlacementY !== yPositionCalculate && defaultPlacementY === 'start') {
+      if (itemPosition.left + MENU_LIST_WIDTH < window.innerWidth) yPositionCalculate = 'start';
+    } else if (defaultPlacementY !== yPositionCalculate && defaultPlacementY === 'end') {
+      if (itemPosition.right - MENU_LIST_WIDTH > 0) yPositionCalculate = 'end';
+    }
+    setPlacementX(xPositionCalculate);
+    setPlacementY(yPositionCalculate);
+  }, [defaultPlacementX, defaultPlacementY]);
+
+  useEffect(() => {
+    const itemPosition = toggleTargetRef.current?.getBoundingClientRect() || {
+      bottom: 0,
+      top: 0,
+      right: 0,
+      left: 0,
+    };
+    let elementHeight = window.innerHeight;
+    if (parentRef?.current) {
+      elementHeight = parentRef?.current?.getBoundingClientRect().bottom;
+    }
+    let height = DEFAULT_LIST_HEIGHT;
+    if (placementX === 'bottom') {
+      height = Math.min(DEFAULT_LIST_HEIGHT, elementHeight - itemPosition.bottom);
+    } else {
+      height = Math.min(DEFAULT_LIST_HEIGHT, itemPosition.top);
+    }
+    setMenuListMaxHeight(height);
+  }, [parentRef, placementX]);
+
   return (
-    <Menu placement={placement}>
-      <MenuToggle>
+    <Menu placement={`${placementX}-${placementY}`}>
+      <MenuToggle ref={toggleTargetRef}>
         <MainIconBtn>
           <Icon icon="user-team" size="5x" />
         </MainIconBtn>
@@ -55,7 +109,12 @@ const MenuIcon = (props: MenuIconProps) => {
           ],
         }}
       >
-        <MenuList maxHeight={200} overflow="auto" width={200}>
+        <MenuList
+          maxHeight={menuListMaxHeight}
+          overflow="auto"
+          width={MENU_LIST_WIDTH}
+          ref={menuListRef}
+        >
           {Array.from({ length: 100 }).map((_, key) => (
             // eslint-disable-next-line react/no-array-index-key
             <MenuItem key={`menuItem-${key}`}>

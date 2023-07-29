@@ -63,7 +63,6 @@ const Content = styled.div`
 `;
 
 function HomePageSimulator() {
-  const [menuState, setMenuState] = useState('main');
   return (
     <TonicProvider colorMode={{ defaultValue: 'dark' }} useCSSBaseline>
       <Layout simulate>
@@ -95,7 +94,7 @@ function HomePageSimulator() {
               >
                 <TextLabel fontSize="48px">TXone Platform</TextLabel>
                 <Space height="4x" />
-                <MenuIcon />
+                <MenuIcon defaultPlacementX="bottom" defaultPlacementY="start" />
                 <Space height="4x" />
                 <DemoModal />
               </Stack>
