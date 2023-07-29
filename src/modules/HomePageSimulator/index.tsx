@@ -3,6 +3,7 @@ import { useState } from 'react';
 import styled from '@emotion/styled';
 import { TonicProvider, Box, TextLabel, Space, Stack, Flex } from '@tonic-ui/react';
 
+import MenuIcon from '@/components/MenuIcon';
 import Layout from '@/Layout';
 
 const SideNav = styled.div`
@@ -66,7 +67,10 @@ function HomePageSimulator() {
     <TonicProvider colorMode={{ defaultValue: 'dark' }} useCSSBaseline>
       <Layout simulate>
         <Box height="100vh" style={{ backgroundColor: 'rgb(21, 21, 21)' }}>
-          <SideNav />
+          <SideNav>
+            <Space height={100} />
+            <MenuIcon />
+          </SideNav>
           <PageMain>
             <Header>
               <Flex alignItems="center" justifyContent="space-between" width="100%">
@@ -75,7 +79,7 @@ function HomePageSimulator() {
                   <Divider />
                   <TextLabel fontSize={14}>breadcrumb (localhost)</TextLabel>
                 </Flex>
-                <div>menu icon</div>
+                <MenuIcon />
               </Flex>
             </Header>
             <Content>
@@ -88,6 +92,7 @@ function HomePageSimulator() {
               >
                 <TextLabel fontSize="48px">TXone Platform</TextLabel>
                 <Space height="4x" />
+                <MenuIcon />
               </Stack>
             </Content>
           </PageMain>
