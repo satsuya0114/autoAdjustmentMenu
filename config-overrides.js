@@ -15,24 +15,6 @@ module.exports = function override(config, env) {
 
   switch (config.mode) {
     case 'production': {
-      config.output = {
-        path: path.resolve(__dirname, './build'),
-        filename: 'txOne.prod.bundle.js',
-        publicPath: '/',
-      };
-      config.plugins.push(
-        new CompressionPlugin({
-          algorithm: 'gzip',
-          test: /\.jsx?$|\.css$|\.(scss|sass)$|/,
-          threshold: 10240,
-          minRatio: 0.8,
-        }),
-      );
-      // config.plugins.push(
-      //   new BundleAnalyzerPlugin({
-      //     generateStatsFile: true,
-      //   }),
-      // );
       return config;
     }
     case 'development': {
