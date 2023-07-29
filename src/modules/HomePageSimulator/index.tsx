@@ -20,7 +20,6 @@ const SideNav = styled.div`
 
 const PageMain = styled(Box)`
   margin-left: 64px;
-  position: relative;
 `;
 
 const Header = styled(Flex)`
@@ -53,11 +52,9 @@ const Divider = styled.div`
   width: 1px;
   top: 0;
   vertical-align: middle;
-  position: relative;
 `;
 
 const Content = styled.div`
-  position: relative;
   overflow: auto;
   height: calc(100vh - 48px);
 `;
@@ -69,7 +66,7 @@ function HomePageSimulator() {
       <Layout simulate>
         <Box height="100vh" style={{ backgroundColor: 'rgb(21, 21, 21)' }}>
           <SideNav>
-            <Stack height="100%" justifyContent="space-between">
+            <Stack height="100%" justifyContent="space-around">
               <MenuIcon />
               <MenuIcon />
             </Stack>
