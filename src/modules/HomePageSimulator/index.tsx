@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef } from 'react';
 
 import styled from '@emotion/styled';
 import { TonicProvider, Box, TextLabel, Space, Stack, Flex } from '@tonic-ui/react';
@@ -63,6 +63,7 @@ const Content = styled.div`
 `;
 
 function HomePageSimulator() {
+  const mainContentRef = useRef<HTMLDivElement>(null);
   return (
     <TonicProvider colorMode={{ defaultValue: 'dark' }} useCSSBaseline>
       <Layout simulate>
@@ -91,10 +92,15 @@ function HomePageSimulator() {
                 direction="column"
                 justifyContent="center"
                 alignItems="center"
+                ref={mainContentRef}
               >
                 <TextLabel fontSize="48px">TXone Platform</TextLabel>
                 <Space height="4x" />
-                <MenuIcon defaultPlacementX="bottom" defaultPlacementY="start" />
+                <MenuIcon
+                  defaultPlacementX="bottom"
+                  defaultPlacementY="start"
+                  parentRef={mainContentRef}
+                />
                 <Space height="4x" />
                 <DemoModal />
               </Stack>

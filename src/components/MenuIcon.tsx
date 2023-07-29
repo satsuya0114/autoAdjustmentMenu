@@ -1,4 +1,4 @@
-import { useState, RefObject, useRef, useEffect } from 'react';
+import { useState, RefObject, useRef, useEffect, useCallback } from 'react';
 
 import styled from '@emotion/styled';
 import {
@@ -11,6 +11,8 @@ import {
   Flex,
   Text,
 } from '@tonic-ui/react';
+import { debounce as _debounce } from 'lodash-es';
+import { v4 as uuidV4 } from 'uuid';
 
 const MainIconBtn = styled(Flex)`
   width: 50px;
@@ -29,7 +31,7 @@ type MenuIconProps = {
 
 const MENU_LIST_WIDTH = 200;
 
-const DEFAULT_LIST_HEIGHT = 200;
+const DEFAULT_LIST_HEIGHT = 250;
 
 const MenuIcon = (props: MenuIconProps) => {
   const { parentRef = null, defaultPlacementX, defaultPlacementY } = props;
@@ -39,7 +41,7 @@ const MenuIcon = (props: MenuIconProps) => {
   const toggleTargetRef = useRef<HTMLDivElement>(null);
   const menuListRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  const calculatePlacement = useCallback(() => {
     const itemPosition = toggleTargetRef.current?.getBoundingClientRect() || {
       bottom: 0,
       top: 0,
@@ -66,7 +68,7 @@ const MenuIcon = (props: MenuIconProps) => {
     setPlacementY(yPositionCalculate);
   }, [defaultPlacementX, defaultPlacementY]);
 
-  useEffect(() => {
+  const calculateHeight = useCallback(() => {
     const itemPosition = toggleTargetRef.current?.getBoundingClientRect() || {
       bottom: 0,
       top: 0,
@@ -74,17 +76,34 @@ const MenuIcon = (props: MenuIconProps) => {
       left: 0,
     };
     let elementHeight = window.innerHeight;
+    let elementBasic = 0;
     if (parentRef?.current) {
       elementHeight = parentRef?.current?.getBoundingClientRect().bottom;
+      elementBasic = parentRef?.current?.getBoundingClientRect().top;
     }
     let height = DEFAULT_LIST_HEIGHT;
     if (placementX === 'bottom') {
       height = Math.min(DEFAULT_LIST_HEIGHT, elementHeight - itemPosition.bottom);
     } else {
-      height = Math.min(DEFAULT_LIST_HEIGHT, itemPosition.top);
+      height = Math.min(DEFAULT_LIST_HEIGHT, itemPosition.top - elementBasic);
     }
     setMenuListMaxHeight(height);
   }, [parentRef, placementX]);
+
+  useEffect(() => {
+    calculatePlacement();
+    calculateHeight();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    const handleWindowResize = _debounce(() => {
+      calculatePlacement();
+      calculateHeight();
+    }, 150);
+    window.addEventListener('resize', handleWindowResize);
+    return () => window.removeEventListener('resize', handleWindowResize);
+  }, [calculateHeight, calculatePlacement]);
 
   return (
     <Menu placement={`${placementX}-${placementY}`}>
@@ -104,7 +123,7 @@ const MenuIcon = (props: MenuIconProps) => {
                 fallbackPlacements: ['top', 'right'],
                 rootBoundary: 'viewport',
               },
-              // enabled: true,
+              enabled: true,
             },
           ],
         }}
@@ -116,8 +135,7 @@ const MenuIcon = (props: MenuIconProps) => {
           ref={menuListRef}
         >
           {Array.from({ length: 100 }).map((_, key) => (
-            // eslint-disable-next-line react/no-array-index-key
-            <MenuItem key={`menuItem-${key}`}>
+            <MenuItem key={`menuItem-${uuidV4()}`}>
               <Flex alignItems="center" columnGap="2x" justifyContent="space-between" width="100%">
                 <Text>List Item {key + 1}</Text>
               </Flex>
